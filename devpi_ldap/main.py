@@ -182,9 +182,13 @@ class LDAP(dict):
         search_filter = config['filter'].format(**kw)
         search_scope = self._search_scope(config)
         attribute_name = config['attribute_name']
+        if attribute_name in ('dn', 'distinguishedName'):
+            attributes = []
+        else:
+            attributes = [attribute_name]
         found = conn.search(
             config['base'], search_filter,
-            search_scope=search_scope, attributes=[attribute_name])
+            search_scope=search_scope, attributes=attributes)
         if found:
             if any(attribute_name in x.get('attributes', {}) for x in conn.response):
                 def extract_search(s):
